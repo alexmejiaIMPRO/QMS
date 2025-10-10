@@ -1,0 +1,142 @@
+<div class="space-y-6">
+    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-8 text-white">
+        <h2 class="text-3xl font-bold mb-2">Welcome back, {{ user.username }}</h2>
+        <p class="text-green-100">Track your reports and stay updated with your quality tasks.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <button hx-get="/dmt/records" 
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer text-left">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mb-1">{{ stats.my_reports }}</p>
+            <p class="text-sm text-gray-500">My Total Reports</p>
+        </button>
+
+        <button hx-get="/dmt/records?search=open" 
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-orange-300 transition-all cursor-pointer text-left">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mb-1">{{ stats.my_open_reports }}</p>
+            <p class="text-sm text-gray-500">Open Reports</p>
+        </button>
+
+        <button hx-get="/dmt/records?search=closed" 
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                class="stat-card bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-green-300 transition-all cursor-pointer text-left">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mb-1">{{ stats.my_closed_reports }}</p>
+            <p class="text-sm text-gray-500">Closed Reports</p>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button hx-get="/dmt" 
+                    hx-target="#main-content"
+                    hx-swap="innerHTML"
+                    class="flex items-center gap-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition group">
+                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </div>
+                <div class="text-left">
+                    <p class="font-semibold text-gray-900">New Report</p>
+                    <p class="text-xs text-gray-500">Create DMT report</p>
+                </div>
+            </button>
+
+            <button hx-get="/dmt" 
+                    hx-target="#main-content"
+                    hx-swap="innerHTML"
+                    class="flex items-center gap-3 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition group">
+                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div class="text-left">
+                    <p class="font-semibold text-gray-900">View Reports</p>
+                    <p class="text-xs text-gray-500">Browse all reports</p>
+                </div>
+            </button>
+
+            <button hx-get="/audit" 
+                    hx-target="#main-content"
+                    hx-swap="innerHTML"
+                    class="flex items-center gap-3 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition group">
+                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div class="text-left">
+                    <p class="font-semibold text-gray-900">Audit Log</p>
+                    <p class="text-xs text-gray-500">View activity</p>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">My Recent Reports</h3>
+        <div class="space-y-3">
+            {% if stats.recent_reports %}
+                {% for report in stats.recent_reports %}
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900">Report #{{ report[0] }}</p>
+                        <p class="text-sm text-gray-600 mt-1">Part: {{ report[1] or 'N/A' }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Assigned to: {{ report[4] or 'Unassigned' }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full
+                            {% if report[2] == 'open' %}bg-orange-100 text-orange-700
+                            {% elif report[2] == 'closed' %}bg-green-100 text-green-700
+                            {% else %}bg-gray-100 text-gray-700{% endif %}">
+                            {{ report[2] }}
+                        </span>
+                        <p class="text-xs text-gray-500 mt-2">{{ report[3][:10] }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-8">
+                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="text-gray-500">No reports yet</p>
+                    <button hx-get="/dmt" 
+                            hx-target="#main-content"
+                            hx-swap="innerHTML"
+                            class="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition">
+                        Create Your First Report
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

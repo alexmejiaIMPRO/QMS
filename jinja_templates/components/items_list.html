@@ -1,0 +1,79 @@
+{% if not items %}
+<div class="text-center py-12 text-gray-400">
+    <div class="text-4xl mb-2">📭</div>
+    <p class="text-lg">No items found</p>
+</div>
+{% else %}
+<div class="mb-4 text-sm text-gray-600 font-semibold">
+    Showing {{ items|length }} of {{ total }} total records
+</div>
+<div class="space-y-3">
+    {% for item in items %}
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-5 flex items-center justify-between hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-200">
+        <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="font-mono text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">{{ item.id }}</span>
+                <!-- Show employee number for employees entity -->
+                {% if entity == 'employees' and item.employee_number %}
+                <span class="font-mono text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-bold">{{ item.employee_number }}</span>
+                {% endif %}
+                <span class="text-xs text-gray-400">{{ item.created_at }}</span>
+            </div>
+            <p class="font-bold text-gray-800 text-lg">{{ item.name }}</p>
+            {% if item.updated_at != item.created_at %}
+            <p class="text-xs text-gray-500 mt-1">Updated: {{ item.updated_at }}</p>
+            {% endif %}
+        </div>
+        <div class="flex gap-2">
+            <button hx-get="/entity/{{ entity }}/edit/{{ item.id }}" 
+                    hx-target="#edit-modal"
+                    class="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-md">
+                ✏️ Edit
+            </button>
+            <button hx-delete="/entity/{{ entity }}/delete/{{ item.id }}" 
+                    hx-target="#items-list"
+                    hx-confirm="Are you sure you want to delete this {{ info.label|lower }}?"
+                    class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-5 rounded-lg transition-all transform hover:scale-105 shadow-md">
+                🗑️ Delete
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if total_pages > 1 %}
+<div class="flex justify-center items-center gap-2 mt-6">
+    {% if page > 1 %}
+    <button hx-get="/entity/{{ entity }}/items?page={{ page - 1 }}&search={{ search }}" 
+            hx-target="#items-list"
+            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">
+        ← Prev
+    </button>
+    {% else %}
+    <button disabled class="px-4 py-2 rounded-lg bg-gray-200 opacity-50 cursor-not-allowed">← Prev</button>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+        {% if p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+        <button hx-get="/entity/{{ entity }}/items?page={{ p }}&search={{ search }}" 
+                hx-target="#items-list"
+                class="px-4 py-2 rounded-lg transition {% if p == page %}bg-blue-500 text-white font-bold{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+            {{ p }}
+        </button>
+        {% elif (p == page - 3 or p == page + 3) and total_pages > 7 %}
+        <span class="px-3 py-2">...</span>
+        {% endif %}
+    {% endfor %}
+
+    {% if page < total_pages %}
+    <button hx-get="/entity/{{ entity }}/items?page={{ page + 1 }}&search={{ search }}" 
+            hx-target="#items-list"
+            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">
+        Next →
+    </button>
+    {% else %}
+    <button disabled class="px-4 py-2 rounded-lg bg-gray-200 opacity-50 cursor-not-allowed">Next →</button>
+    {% endif %}
+</div>
+{% endif %}
+{% endif %}

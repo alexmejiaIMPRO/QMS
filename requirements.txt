@@ -1,0 +1,21 @@
+# Core FastAPI dependencies
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+
+# Template engine
+jinja2==3.1.4
+
+# Session management
+itsdangerous==2.2.0
+
+# Validation and settings - Updated for Python 3.13 compatibility
+pydantic==2.9.0
+pydantic-settings==2.5.0
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Password hashing
+passlib==1.7.4
+bcrypt==4.2.0

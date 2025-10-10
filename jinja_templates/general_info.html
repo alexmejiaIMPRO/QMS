@@ -1,0 +1,19 @@
+<div class="bg-white rounded-xl shadow-xl p-6 mb-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">General Information Management</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        {% for entity in entities %}
+        <button hx-get="/entity/{{ entity.key }}" 
+                hx-target="#main-content"
+                class="bg-gradient-to-br from-{{ entity.color }}-500 to-{{ entity.color }}-600 hover:from-{{ entity.color }}-600 hover:to-{{ entity.color }}-700 text-white font-semibold py-4 px-4 rounded-xl shadow-lg transition-all transform hover:scale-105">
+            <div class="text-2xl mb-1">{{ entity.icon }}</div>
+            {{ entity.label }}
+        </button>
+        {% endfor %}
+    </div>
+    <button hx-get="/" 
+            hx-target="body"
+            hx-swap="innerHTML"
+            class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+        ← Back
+    </button>
+</div>

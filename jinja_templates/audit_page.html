@@ -1,0 +1,43 @@
+<div class="bg-white rounded-xl shadow-xl p-8">
+    <div class="flex items-center gap-3 mb-6">
+        <span class="text-4xl">📜</span>
+        <h3 class="text-3xl font-bold text-gray-800">Audit Log</h3>
+    </div>
+    
+    <div class="space-y-3">
+        {% if not logs %}
+        <div class="text-center py-8 text-gray-500">No audit logs found</div>
+        {% else %}
+        {% for log in logs %}
+        {% set action_color = {
+            'create': 'bg-green-100 text-green-700',
+            'update': 'bg-blue-100 text-blue-700',
+            'delete': 'bg-red-100 text-red-700'
+        }.get(log.action|lower, 'bg-gray-100 text-gray-700') %}
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold {{ action_color }}">
+                    {{ log.action|upper if log.action else 'N/A' }}
+                </span>
+                <span class="text-xs text-gray-400">{{ log.timestamp or 'N/A' }}</span>
+            </div>
+            <div class="text-sm text-gray-700">
+                <div><span class="font-semibold">Entity:</span> {{ log.entity_type or 'N/A' }}</div>
+                <div><span class="font-semibold">Entity ID:</span> {{ log.entity_id or 'N/A' }}</div>
+                <div><span class="font-semibold">User:</span> {{ log.user or 'System' }}</div>
+                {% if log.details %}
+                <div class="mt-2 text-xs text-gray-500">{{ log.details }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    
+    <button hx-get="/" 
+            hx-target="body"
+            hx-swap="innerHTML"
+            class="mt-6 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+        ← Back
+    </button>
+</div>

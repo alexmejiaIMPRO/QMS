@@ -1,0 +1,14 @@
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+        <button hx-get="/auth/admin/users/create" 
+                hx-target="#main-content" 
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+            Create User
+        </button>
+    </div>
+
+    <div id="users-list">
+        {% include "auth/users_list.html" %}
+    </div>
+</div>
