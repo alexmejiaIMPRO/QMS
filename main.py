@@ -70,7 +70,7 @@ async def root(request: Request):
         if user["role"] == "Admin":
             # Admin dashboard statistics
             stats["total_users"] = c.execute(
-                "SELECT COUNT(*) FROM users WHERE is_active = 1"
+                "SELECT COUNT(*) FROM users" 
             ).fetchone()[0]
             stats["total_reports"] = c.execute(
                 "SELECT COUNT(*) FROM dmt_records WHERE is_active = 1"

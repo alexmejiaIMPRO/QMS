@@ -2,7 +2,8 @@
 DMT (Defective Material Tag) routes with workflow management
 """
 from typing import Optional
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Form, Request, status
+from fastapi.responses import Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from config import EntityType
@@ -632,53 +633,45 @@ async def update_dmt_record(
         return RedirectResponse(url=f"/dmt/edit/{dmt_id}?error={str(e)}", status_code=303)
 
 
-@router.delete("/delete/{dmt_id}", response_class=HTMLResponse)
+@router.delete("/delete/{dmt_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_dmt_record(dmt_id: str, request: Request):
-    """Delete a DMT record (soft delete)"""
+    """
+    Soft deletes a DMT record. Returns an empty 200 OK response with an
+    HX-Trigger header, which tells the list container on the frontend to reload itself.
+    """
     user = get_current_user(request)
-    if not user:
-        return render_toast("Please log in to delete DMT records", "error")
+    
+    # Security check to ensure only authorized users can delete
+    if not user or user["role"] not in ["Admin", "Inspector", "Supervisor"]:
+        return Response(status_code=status.HTTP_403_FORBIDDEN, content="Not authorized")
     
     db = get_db()
     conn = db.get_connection()
     c = conn.cursor()
 
-    c.execute(
-        "UPDATE dmt_records SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        (dmt_id,)
-    )
+    # Check if the record exists before trying to delete
+    c.execute("SELECT id FROM dmt_records WHERE id = ? AND is_active = 1", (dmt_id,))
+    record_exists = c.fetchone()
+    
+    if record_exists:
+        c.execute(
+            "UPDATE dmt_records SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+            (dmt_id,)
+        )
+        c.execute(
+            "INSERT INTO audit_log (entity_type, entity_id, action, user_id) VALUES (?, ?, ?, ?)",
+            ("dmt_records", dmt_id, "DELETE", user["id"])
+        )
+        conn.commit()
 
-    c.execute(
-        "INSERT INTO audit_log (entity_type, entity_id, action, user_id) VALUES (?, ?, ?, ?)",
-        ("dmt_records", dmt_id, "DELETE", user["id"])
-    )
-
-    conn.commit()
     conn.close()
 
-    db = get_db()
-    conn = db.get_connection()
-    c = conn.cursor()
-    
-    c.execute("SELECT COUNT(*) as count FROM dmt_records WHERE is_active = 1")
-    total = c.fetchone()[0]
-    
-    c.execute("SELECT * FROM dmt_records WHERE is_active = 1 ORDER BY created_at DESC LIMIT 20")
-    records = [dict(row) for row in c.fetchall()]
-    
-    conn.close()
-
-    html = templates.get_template("dmt/records_list.html").render(
-        request=request,
-        records=records,
-        total=total,
-        page=1,
-        search=""
+    # Return an empty response but add the HX-Trigger header
+    # This tells any element listening for 'dmtListChanged' to fire its trigger.
+    return Response(
+        status_code=200,
+    headers={"HX-Trigger": "dmtListChanged"}
     )
-    html += render_toast(f"DMT record {dmt_id} deleted successfully!", "success")
-    return html
-
-
 @router.get("/export/{format}")
 async def export_dmt_records(format: str, request: Request, days: Optional[int] = None):
     """Export DMT records in JSON or CSV format"""

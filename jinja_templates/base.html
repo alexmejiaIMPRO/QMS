@@ -1,97 +1,94 @@
 <!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html>
+<html lang="es" class="dark"> <!-- Dark mode por defecto -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quality Management System</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <style>
         .stat-card {
             transition: all 0.3s ease;
         }
+
         .stat-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+
+<body class="bg-gray-900 text-gray-100 min-h-screen">
     <div id="toast-container"></div>
     <div id="edit-modal"></div>
 
- 
-    <header class="bg-white shadow-sm border-b border-gray-200">
+    <header class="bg-gray-800 shadow-sm border-b border-gray-700">
         <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-xl">Q</span>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-gray-900">Quality Management System</h1>
-                        <p class="text-xs text-gray-500">Version 1.0</p>
-                    </div>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl xl:text-3xl font-extrabold tracking-tight text-foreground">IRIS</span>
+                    <span
+                        class="text-sm xl:text-base font-semibold text-primary border-b-2 border-primary ">AEGIS</span>
                 </div>
+
                 {% if user %}
                 <div class="flex items-center gap-6">
                     <nav class="flex gap-2">
-                        <button onclick="window.location.href='/'" 
-                                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                        <button onclick="window.location.href='/'"
+                            class="px-4 py-2 text-sm font-medium text-gray-200 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition">
                             Dashboard 🏠
                         </button>
                         {% if user.role == 'Admin' %}
-                        <button hx-get="/general-info" 
-                                hx-target="#main-content"
-                                hx-swap="innerHTML"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                        <button hx-get="/general-info" hx-target="#main-content" hx-swap="innerHTML"
+                            class="px-4 py-2 text-sm font-medium text-gray-200 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition">
                             Edit Info 📄
                         </button>
                         {% endif %}
-                        <button hx-get="/dmt" 
-                                hx-target="#main-content"
-                                hx-swap="innerHTML"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                        <button hx-get="/dmt" hx-target="#main-content" hx-swap="innerHTML"
+                            class="px-4 py-2 text-sm font-medium text-gray-200 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition">
                             DMT 🛠
                         </button>
-                        <button hx-get="/audit" 
-                                hx-target="#main-content"
-                                hx-swap="innerHTML"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                        <button hx-get="/audit" hx-target="#main-content" hx-swap="innerHTML"
+                            class="px-4 py-2 text-sm font-medium text-gray-200 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition">
                             Audit Log 📜
                         </button>
                         {% if user.role == 'Admin' %}
-                        <button hx-get="/auth/admin/users" 
-                                hx-target="#main-content"
-                                hx-swap="innerHTML"
-                                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                        <button hx-get="/auth/admin/users" hx-target="#main-content" hx-swap="innerHTML"
+                            class="px-4 py-2 text-sm font-medium text-gray-200 hover:text-blue-400 hover:bg-gray-700 rounded-lg transition">
                             Users 👥
                         </button>
                         {% endif %}
                     </nav>
-                    <div class="flex items-center gap-4 pl-6 border-l border-gray-200">
-    <div class="text-right">
-        <p class="text-sm font-semibold text-gray-900">{{ user.username }}</p>
-        <p class="text-xs text-gray-500 capitalize">{{ user.role }}</p>
-    </div>
-    
-    <!-- User Avatar -->
-    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
-        {{ user.username[0].upper() }}
-    </div>
-    
-    <form action="/auth/logout" method="post">
-        <button type="submit" 
-                class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 border border-transparent hover:border-red-200">
-            <span class="flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Logout
-            </span>
-        </button>
-    </form>
-</div>                </div>
+                    <div class="flex items-center gap-4 pl-6 border-l border-gray-700">
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-gray-100">{{ user.username }}</p>
+                            <p class="text-xs text-gray-400 capitalize">{{ user.role }}</p>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                            {{ user.username[0].upper() }}
+                        </div>
+                        <form action="/auth/logout" method="post">
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium text-gray-200 hover:text-red-400 hover:bg-gray-700 rounded-lg transition-all duration-200 border border-transparent hover:border-red-500">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    Logout
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -100,11 +97,12 @@
     <main class="container mx-auto px-6 py-8">
         <div id="main-content">
             {% if user.role == 'Admin' %}
-                {% include 'dashboards/admin_dashboard.html' %}
+            {% include 'dashboards/admin_dashboard.html' %}
             {% else %}
-                {% include 'dashboards/user_dashboard.html' %}
+            {% include 'dashboards/user_dashboard.html' %}
             {% endif %}
         </div>
     </main>
 </body>
+
 </html>

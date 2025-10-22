@@ -1,65 +1,81 @@
-{% if not records %}
-<div class="text-center py-8 text-gray-500">No DMT records found</div>
-{% else %}
 <div class="overflow-x-auto">
-    <table class="min-w-full bg-white border border-gray-400">
-        <thead>
-            <tr class="bg-gray-300 border-b border-gray-400">
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Report #</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">DMT DATE</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">CUSTOMER</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Part Num</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Quantity</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Operation</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Employee</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Shop Order</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">SERIAL NUMBER</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Status</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800 border-r border-gray-400">Assigned To</th>
-                <th class="px-3 py-2 text-left text-xs font-bold text-gray-800">DEFECT</th>
+    <table class="min-w-full bg-white">
+        <thead class="bg-gray-800 text-white">
+            <tr>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">DMT #</th>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Part #</th>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Shop Order</th>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Status</th>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Workflow Stage</th>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Created At</th>
+                <th class="py-3 px-4 uppercase font-semibold text-sm text-left">Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="text-gray-700">
             {% for record in records %}
-            {% set row_color = 'bg-green-50' if loop.index0 % 2 == 0 else 'bg-amber-50' %}
-            <tr class="{{ row_color }} border-b border-gray-300 hover:bg-blue-100 transition cursor-pointer"
-                hx-get="/dmt/edit/{{ record.id }}" 
-                hx-target="#main-content">
-                <td class="px-3 py-2 text-xs font-bold text-blue-700 border-r border-gray-300 whitespace-nowrap">#{{ record.report_number }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.date or '' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.customer or '' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.part_num or '' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.qty or '0' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.operation or '' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.employee_name or '' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.shop_order or '' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.serial_number or '' }}</td>
-                <td class="px-3 py-2 text-xs border-r border-gray-300 whitespace-nowrap">
-                    {% if record.status == 'open' %}
-                    <span class="px-2 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-semibold">Open</span>
-                    {% else %}
-                    <span class="px-2 py-1 bg-green-200 text-green-800 rounded-full text-xs font-semibold">Closed</span>
+            <tr class="border-b border-gray-200 hover:bg-gray-100 cursor-pointer {% if record.is_session %}bg-orange-50{% endif %}"
+                hx-get="/dmt/edit/{{ record.id }}" hx-target="#main-content">
+                <td class="py-3 px-4 font-medium">{{ record.report_number }}</td>
+                <td class="py-3 px-4">{{ record.part_num }}</td>
+                <td class="py-3 px-4">{{ record.shop_order }}</td>
+                <td class="py-3 px-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold
+            {% if record.status == 'open' %}bg-green-200 text-green-800
+            {% else %}bg-red-200 text-red-800{% endif %}">
+                        {{ record.status.title() }}
+                    </span>
+                    {% if record.is_session %}
+                    <span class="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-orange-200 text-orange-800">
+                        Session
+                    </span>
                     {% endif %}
                 </td>
-                <td class="px-3 py-2 text-xs text-gray-900 border-r border-gray-300 whitespace-nowrap">{{ record.assigned_to or 'Unassigned' }}</td>
-                <td class="px-3 py-2 text-xs text-gray-900">{{ record.description or '' }}</td>
+                <td class="py-3 px-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold
+            {% if record.workflow_status == 'draft' %}bg-gray-200 text-gray-700
+            {% elif record.workflow_status == 'supervisor_review' %}bg-blue-200 text-blue-700
+            {% elif record.workflow_status == 'manager_review' %}bg-yellow-200 text-yellow-700
+            {% elif record.workflow_status == 'engineer_review' %}bg-purple-200 text-purple-700
+            {% elif record.workflow_status == 'completed' %}bg-green-200 text-green-700
+            {% endif %}">
+                        {{ record.workflow_status.replace('_', ' ').title() }}
+                    </span>
+                </td>
+                <td class="py-3 px-4">{{ record.created_at.split(' ')[0] if record.created_at else 'N/A' }}</td>
+
+                
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-8 text-gray-500">
+                    No DMT records found.
+                </td>
             </tr>
             {% endfor %}
         </tbody>
+
     </table>
 </div>
 
-{% set total_pages = ((total + 19) // 20)|int %}
-{% if total_pages > 1 %}
-<div class="flex justify-center gap-2 mt-6">
-    {% for p in range(1, [total_pages + 1, 11]|min) %}
-    {% set active = 'bg-blue-600 text-white' if p == page else 'bg-gray-200 text-gray-700 hover:bg-gray-300' %}
-    <button hx-get="/dmt/records/items?page={{ p }}&search={{ search }}" 
-            hx-target="#dmt-records-list"
-            class="{{ active }} font-semibold py-2 px-4 rounded-lg transition">
-        {{ p }}
-    </button>
-    {% endfor %}
+<!-- Pagination -->
+<div class="mt-6 flex justify-between items-center">
+    <span class="text-sm text-gray-600">
+        Showing {{ records|length }} of {{ total }} records.
+    </span>
+    <!-- You can add real pagination controls here later if you need them -->
 </div>
-{% endif %}
-{% endif %}
+
+<style>
+    tr.htmx-swapping {
+        opacity: 0;
+        transition: opacity 0.4s ease-out;
+    }
+</style>
+<script>
+    document.body.addEventListener('htmx:afterSwap', (e) => {
+        console.log("HTMX swapped:", e.target);
+    });
+    document.body.addEventListener('htmx:afterRequest', (e) => {
+        console.log("HTMX request done:", e.detail.xhr.status);
+    });
+</script>

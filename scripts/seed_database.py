@@ -434,74 +434,7 @@ def seed_dmt_records(users):
         "Rocha Sanchez, David Emmanuel",
     ]
 
-    # Create 15 DMT records
-    for i in range(15):
-        record_id = str(uuid.uuid4())
-        created_by = random.choice(users)
-        assigned_to = random.choice(users)
-        status = random.choice(statuses)
-
-        # Generate dates
-        days_ago = random.randint(1, 90)
-        created_date = (datetime.now() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
-
-        try:
-            c.execute(
-                """
-                INSERT INTO dmt_records (
-                    id, report_number, work_center, part_num, operation,
-                    employee_name, qty, customer, shop_order, serial_number,
-                    inspection_item, date, prepared_by, description,
-                    car_type, process_description, analysis, analysis_by,
-                    disposition, engineer, failure_code, status,
-                    created_by, assigned_to, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    record_id,
-                    report_number,
-                    random.choice(work_centers),
-                    random.choice(part_numbers),
-                    f"OP-{random.randint(10, 50)}",
-                    random.choice(employees),
-                    str(random.randint(10, 500)),
-                    random.choice(customers),
-                    f"SO-{random.randint(1000, 9999)}",
-                    f"SN-{random.randint(10000, 99999)}",
-                    random.choice(
-                        ["Dimensional Check", "Visual Inspection", "Hardness Test"]
-                    ),
-                    created_date,
-                    random.choice(["QC Inspector 1", "QC Inspector 2"]),
-                    f"Defect found during inspection - Issue #{i + 1}",
-                    random.choice(["Corrective Action", "Preventive Action"]),
-                    f"Process analysis for defect #{i + 1}",
-                    f"Root cause analysis completed for issue #{i + 1}",
-                    random.choice(["john_engineer", "lisa_engineer"]),
-                    random.choice(["Use As Is", "Rework", "Scrap"]),
-                    random.choice(["john_engineer", "lisa_engineer"]),
-                    random.choice(
-                        [
-                            "FC-001 Dimensional",
-                            "FC-002 Surface Defect",
-                            "FC-003 Material",
-                        ]
-                    ),
-                    status,
-                    created_by["username"],
-                    assigned_to["username"],
-                    created_date,
-                ),
-            )
-
-            print(
-                f"Created DMT Record #{report_number} - Status: {status}, Created by: {created_by['username']}, Assigned to: {assigned_to['username']}"
-            )
-            report_number += 1
-
-        except Exception as e:
-            print(f"Error creating DMT record: {e}")
-
+    
     # Update the counter
     c.execute(
         "UPDATE report_counter SET next_number = ? WHERE id = 1", (report_number,)

@@ -5,6 +5,7 @@
     </div>
     
     <div class="mb-6">
+        <!-- The search bar stays the same, it targets the list div -->
         <input type="text" 
                name="search"
                value="{{ search }}"
@@ -24,7 +25,7 @@
         </button>
     </div>
 
-     Added export buttons for DMT records 
+    <!-- Export buttons section (no changes) -->
     <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 mb-6 border-2 border-purple-200">
         <h4 class="font-bold text-gray-800 mb-4 text-lg">📥 Export DMT Records</h4>
         <div class="flex flex-wrap gap-2">
@@ -55,7 +56,19 @@
         </div>
     </div>
 
-    <div id="dmt-records-list">
+    <!-- 
+      *** UPDATED LIST CONTAINER ***
+      This div now reloads itself when it hears 'dmtListChanged' (from the delete button)
+      or on 'load' (when the page first opens).
+      It includes the search bar's value to stay in sync.
+    -->
+    <div id="dmt-records-list"
+         hx-get="/dmt/records/items"
+         hx-trigger="load, dmtListChanged from:body"
+         hx-swap="innerHTML"
+         hx-include="[name='search']">
+        
+        <!-- The server will include the partial here on initial load -->
         {% include 'dmt/records_list.html' %}
     </div>
 
